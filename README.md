@@ -262,6 +262,39 @@ Only Discord is active right now. The notification service is structured so
 OpenClaw and other future channels can be added later without changing
 prediction generation.
 
+## OpenClaw Integration
+
+OpenClaw can call GapSight as a conversational automation layer while Discord
+remains the current notification channel.
+
+JSON endpoint:
+
+```text
+GET http://127.0.0.1:8000/api/v1/openclaw/predict/BANKNIFTY
+```
+
+Plain-text alert endpoint:
+
+```text
+GET http://127.0.0.1:8000/api/v1/openclaw/predict/BANKNIFTY/alert
+```
+
+Optional OpenClaw-only bearer auth can be enabled with:
+
+```text
+OPENCLAW_API_TOKEN=your-token-here
+ENABLE_OPENCLAW_AUTH=true
+```
+
+Then send:
+
+```text
+Authorization: Bearer your-token-here
+```
+
+The tool spec lives at `openclaw/gapsight_tool.json`, with setup notes in
+`openclaw/README.md`.
+
 ## Daily Alert Workflow
 
 Run the complete daily BANKNIFTY workflow from one command.

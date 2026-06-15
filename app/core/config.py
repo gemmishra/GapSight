@@ -20,6 +20,8 @@ class Settings(BaseSettings if BaseSettings is not None else object):
     PROCESSED_DATA_DIR: str = "app/data/processed"
     DISCORD_WEBHOOK_URL: str = ""
     ENABLE_DISCORD_NOTIFICATIONS: bool = False
+    OPENCLAW_API_TOKEN: str = ""
+    ENABLE_OPENCLAW_AUTH: bool = False
 
     if SettingsConfigDict is not None:
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -38,9 +40,14 @@ class Settings(BaseSettings if BaseSettings is not None else object):
             "PROCESSED_DATA_DIR",
             "DISCORD_WEBHOOK_URL",
             "ENABLE_DISCORD_NOTIFICATIONS",
+            "OPENCLAW_API_TOKEN",
+            "ENABLE_OPENCLAW_AUTH",
         ):
             value = os.getenv(field_name, getattr(self, field_name))
-            if field_name == "ENABLE_DISCORD_NOTIFICATIONS":
+            if field_name in {
+                "ENABLE_DISCORD_NOTIFICATIONS",
+                "ENABLE_OPENCLAW_AUTH",
+            }:
                 value = str(value).lower() in {"1", "true", "yes", "on"}
             setattr(self, field_name, value)
 
@@ -55,3 +62,5 @@ RAW_DATA_DIR = settings.RAW_DATA_DIR
 PROCESSED_DATA_DIR = settings.PROCESSED_DATA_DIR
 DISCORD_WEBHOOK_URL = settings.DISCORD_WEBHOOK_URL
 ENABLE_DISCORD_NOTIFICATIONS = settings.ENABLE_DISCORD_NOTIFICATIONS
+OPENCLAW_API_TOKEN = settings.OPENCLAW_API_TOKEN
+ENABLE_OPENCLAW_AUTH = settings.ENABLE_OPENCLAW_AUTH

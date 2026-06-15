@@ -1,0 +1,24 @@
+{
+  "name": "gapsight_predict",
+  "description": "Predict BANKNIFTY pre-market gap direction, gap size, and opening range.",
+  "method": "GET",
+  "url_template": "http://127.0.0.1:8000/api/v1/openclaw/predict/{symbol}",
+  "parameters": {
+    "symbol": {
+      "type": "string",
+      "required": true,
+      "default": "BANKNIFTY",
+      "examples": [
+        "BANKNIFTY",
+        "BANK NIFTY",
+        "NIFTY BANK"
+      ]
+    }
+  },
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "token_env": "OPENCLAW_API_TOKEN"
+  },
+  "response_usage": "Tell the user the formatted_alert field."
+}

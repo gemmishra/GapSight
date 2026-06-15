@@ -3,9 +3,10 @@
 from collections.abc import Callable
 from typing import TypeVar
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 from fastapi.responses import PlainTextResponse
 
+from app.core.config import settings
 from app.ml.inference.predictor import (
     FeatureMismatchError,
     MissingMetadataError,
@@ -56,6 +57,41 @@ def _run_notification_or_raise(action: Callable[[], T]) -> T:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
+def _verify_openclaw_auth(authorization: str | None) -> None:
+    if not settings.ENABLE_OPENCLAW_AUTH:
+        return
+
+    expected_token = settings.OPENCLAW_API_TOKEN.strip()
+    if not expected_token:
+        raise HTTPException(
+            status_code=401,
+            detail="OpenClaw auth is enabled but OPENCLAW_API_TOKEN is not configured.",
+        )
+
+    expected_header = f"Bearer {expected_token}"
+    if authorization != expected_header:
+        raise HTTPException(
+            status_code=401,
+            detail="Missing or invalid OpenClaw bearer token.",
+        )
+
+
+def _compact_openclaw_prediction(prediction: dict) -> dict:
+    return {
+        "symbol": prediction["symbol"],
+        "direction_label": prediction["direction_label"],
+        "confidence_label": prediction["confidence_label"],
+        "predicted_gap_percent": prediction["predicted_gap_percent"],
+        "predicted_gap_points": prediction["predicted_gap_points"],
+        "expected_open": prediction["expected_open"],
+        "expected_open_min": prediction["expected_open_min"],
+        "expected_open_max": prediction["expected_open_max"],
+        "model_quality": prediction["model_quality"],
+        "reliability_warning": prediction["reliability_warning"],
+        "formatted_alert": prediction["formatted_alert"],
+    }
+
+
 @router.get("/supported-symbols", response_model=list[SupportedSymbol])
 async def get_supported_symbols() -> list[SupportedSymbol]:
     """Return the symbols currently supported by GapSight."""
@@ -81,3 +117,25 @@ async def send_symbol_alert(symbol: str, channel: str = "discord") -> dict:
     return _run_notification_or_raise(
         lambda: send_prediction_alert(symbol=symbol, channel=channel)
     )
+
+
+@router.get("/openclaw/predict/{symbol}")
+async def openclaw_predict_symbol(
+    symbol: str,
+    authorization: str | None = Header(default=None),
+) -> dict:
+    """Return compact model prediction for OpenClaw tool calls."""
+    _verify_openclaw_auth(authorization)
+    prediction = _run_prediction_or_raise(lambda: predict_latest(symbol))
+    return _compact_openclaw_prediction(prediction)
+
+
+@router.get("/openclaw/predict/{symbol}/alert", response_class=PlainTextResponse)
+async def openclaw_predict_symbol_alert(
+    symbol: str,
+    authorization: str | None = Header(default=None),
+) -> PlainTextResponse:
+    """Return compact OpenClaw alert text for conversational responses."""
+    _verify_openclaw_auth(authorization)
+    prediction = _run_prediction_or_raise(lambda: predict_latest(symbol))
+    return PlainTextResponse(prediction["formatted_alert"])
