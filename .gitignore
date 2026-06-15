@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+
+# Test and tooling caches
+.pytest_cache/
+.pytest_tmp/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Data and model artifacts (retain directories via .gitkeep)
+app/data/raw/*
+!app/data/raw/.gitkeep
+app/data/processed/*
+!app/data/processed/.gitkeep
+app/models/*
+!app/models/.gitkeep
