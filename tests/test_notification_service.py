@@ -3,6 +3,7 @@ import pytest
 from app.services import notification_service
 from app.services.notification_service import (
     MissingNotificationConfigError,
+    SUPPORTED_NOTIFICATION_CHANNELS,
     UnsupportedNotificationChannelError,
     send_discord_webhook,
     send_prediction_alert,
@@ -22,6 +23,11 @@ def test_missing_discord_webhook_gives_clear_error(monkeypatch) -> None:
 def test_unsupported_channel_gives_clear_error() -> None:
     with pytest.raises(UnsupportedNotificationChannelError, match="Unsupported"):
         send_prediction_alert("BANKNIFTY", channel="telegram")
+
+
+def test_whatsapp_is_not_listed_as_supported_current_channel() -> None:
+    assert "discord" in SUPPORTED_NOTIFICATION_CHANNELS
+    assert "whatsapp" not in SUPPORTED_NOTIFICATION_CHANNELS
 
 
 def test_send_prediction_alert_uses_formatted_alert(monkeypatch) -> None:

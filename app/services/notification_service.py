@@ -5,6 +5,8 @@ from typing import Any
 from app.core.config import settings
 from app.ml.inference.predictor import predict_latest
 
+SUPPORTED_NOTIFICATION_CHANNELS: tuple[str, ...] = ("discord",)
+
 
 class NotificationError(Exception):
     """Base exception for notification failures."""
@@ -55,9 +57,10 @@ def send_discord_webhook(message: str) -> dict[str, Any]:
 def send_prediction_alert(symbol: str, channel: str = "discord") -> dict[str, Any]:
     """Generate the latest prediction alert and send it to a notification channel."""
     normalized_channel = channel.strip().lower()
-    if normalized_channel != "discord":
+    if normalized_channel not in SUPPORTED_NOTIFICATION_CHANNELS:
         raise UnsupportedNotificationChannelError(
-            f"Unsupported notification channel: {channel}. Currently supported: discord"
+            "Unsupported notification channel: "
+            f"{channel}. Currently supported: {', '.join(SUPPORTED_NOTIFICATION_CHANNELS)}"
         )
 
     prediction = predict_latest(symbol)

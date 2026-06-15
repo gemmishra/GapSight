@@ -17,7 +17,14 @@ predictions.
 ## Roadmap
 
 Future versions may add NIFTY, FINNIFTY, individual stocks, prompt-based symbol
-selection, OpenClaw integration, and Discord or WhatsApp notifications.
+selection, OpenClaw integration, and scheduler automation.
+
+Current and planned workflow:
+
+- Discord webhook alerts: current
+- Scheduler automation: current via CLI workflow
+- OpenClaw integration: planned
+- Multi-symbol support: planned
 
 ## Setup
 
@@ -226,8 +233,8 @@ is not expressing a strong probability preference among direction classes.
 
 The prediction response also includes friendly direction wording, gap-size
 interpretation, reliability warnings, and a `formatted_alert` text block. That
-alert is intended for future OpenClaw, Discord, or WhatsApp reuse, but no
-notification integration is active yet.
+alert is used by Discord webhook alerts and is intended for future OpenClaw
+reuse.
 
 ## Notifications
 
@@ -252,5 +259,36 @@ POST http://127.0.0.1:8000/api/v1/alerts/BANKNIFTY/send?channel=discord
 ```
 
 Only Discord is active right now. The notification service is structured so
-OpenClaw, WhatsApp, Telegram, and other channels can be added later without
-changing prediction generation.
+OpenClaw and other future channels can be added later without changing
+prediction generation.
+
+## Daily Alert Workflow
+
+Run the complete daily BANKNIFTY workflow from one command.
+
+Dry run:
+
+```bash
+python scripts/run_daily_alert.py --symbol BANKNIFTY --channel discord --dry-run
+```
+
+Normal send:
+
+```bash
+python scripts/run_daily_alert.py --symbol BANKNIFTY --channel discord
+```
+
+With retraining:
+
+```bash
+python scripts/run_daily_alert.py --symbol BANKNIFTY --channel discord --retrain
+```
+
+By default, the workflow downloads latest data, rebuilds the processed dataset,
+uses existing trained models, generates a prediction, and sends the formatted
+alert. Use `--retrain` to retrain models before sending. Use `--dry-run` to
+print the alert without sending it.
+
+This command can later be scheduled with Windows Task Scheduler. OpenClaw
+integration is planned next. Additional notification channels are outside the
+current scope.
