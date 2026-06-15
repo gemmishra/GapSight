@@ -20,6 +20,7 @@ class Settings(BaseSettings if BaseSettings is not None else object):
     PROCESSED_DATA_DIR: str = "app/data/processed"
     DISCORD_WEBHOOK_URL: str = ""
     ENABLE_DISCORD_NOTIFICATIONS: bool = False
+    OPENCLAW_BASE_URL: str = "http://127.0.0.1:8000"
     OPENCLAW_API_TOKEN: str = ""
     ENABLE_OPENCLAW_AUTH: bool = False
 
@@ -40,6 +41,7 @@ class Settings(BaseSettings if BaseSettings is not None else object):
             "PROCESSED_DATA_DIR",
             "DISCORD_WEBHOOK_URL",
             "ENABLE_DISCORD_NOTIFICATIONS",
+            "OPENCLAW_BASE_URL",
             "OPENCLAW_API_TOKEN",
             "ENABLE_OPENCLAW_AUTH",
         ):
@@ -62,5 +64,6 @@ RAW_DATA_DIR = settings.RAW_DATA_DIR
 PROCESSED_DATA_DIR = settings.PROCESSED_DATA_DIR
 DISCORD_WEBHOOK_URL = settings.DISCORD_WEBHOOK_URL
 ENABLE_DISCORD_NOTIFICATIONS = settings.ENABLE_DISCORD_NOTIFICATIONS
+OPENCLAW_BASE_URL = settings.OPENCLAW_BASE_URL
 OPENCLAW_API_TOKEN = settings.OPENCLAW_API_TOKEN
 ENABLE_OPENCLAW_AUTH = settings.ENABLE_OPENCLAW_AUTH

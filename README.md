@@ -295,6 +295,16 @@ Authorization: Bearer your-token-here
 The tool spec lives at `openclaw/gapsight_tool.json`, with setup notes in
 `openclaw/README.md`.
 
+Use the generator to create an OpenClaw tool spec for local, ngrok, or deployed
+URLs:
+
+```bash
+python scripts/generate_openclaw_tool.py --base-url http://127.0.0.1:8000
+```
+
+Use the `/alert` endpoint when OpenClaw should directly return plain text to
+the user.
+
 ## Daily Alert Workflow
 
 Run the complete daily BANKNIFTY workflow from one command.

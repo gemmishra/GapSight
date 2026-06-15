@@ -3,6 +3,7 @@
   "description": "Predict BANKNIFTY pre-market gap direction, gap size, and opening range.",
   "method": "GET",
   "url_template": "http://127.0.0.1:8000/api/v1/openclaw/predict/{symbol}",
+  "alert_url_template": "http://127.0.0.1:8000/api/v1/openclaw/predict/{symbol}/alert",
   "parameters": {
     "symbol": {
       "type": "string",
@@ -17,8 +18,9 @@
   },
   "auth": {
     "type": "bearer",
+    "required_when": "ENABLE_OPENCLAW_AUTH=true",
     "header": "Authorization",
     "token_env": "OPENCLAW_API_TOKEN"
   },
-  "response_usage": "Tell the user the formatted_alert field."
+  "response_usage": "For normal JSON endpoint, use formatted_alert field as the user-facing answer. For alert endpoint, return the plain text response directly."
 }
